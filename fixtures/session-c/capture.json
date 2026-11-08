@@ -1,0 +1,38 @@
+{
+  "session_id": "fixture-session-c",
+  "cwd": "/tmp/fixture-c",
+  "started_at": "2026-11-08T12:00:00.000Z",
+  "updated_at": "2026-11-08T12:06:00.000Z",
+  "ended_at": "2026-11-08T12:06:00.000Z",
+  "branch": "feat/report",
+  "baseline": {
+    "available": true,
+    "cwd": "/tmp/fixture-c",
+    "head": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "branch": "feat/report",
+    "status": "",
+    "treeHash": "ffffffffffffffffffffffffffffffffffffffff"
+  },
+  "prompts": [
+    {
+      "ts": "2026-11-08T12:00:10.000Z",
+      "prompt": "Implementa un endpoint que agregue el reporte de ventas del mes."
+    }
+  ],
+  "tools": [
+    {
+      "ts": "2026-11-08T12:02:00.000Z",
+      "tool_name": "Write",
+      "input": { "file_path": "src/api/salesReport.ts" },
+      "files": ["src/api/salesReport.ts"],
+      "summary": "Loads all sales into memory then aggregates"
+    }
+  ],
+  "touched_files": ["src/api/salesReport.ts"],
+  "diff": {
+    "available": true,
+    "files": ["src/api/salesReport.ts"],
+    "unifiedDiff": "--- /dev/null\n+++ b/src/api/salesReport.ts\n@@ -0,0 +1,8 @@\n+export async function salesReport(db) {\n+  const rows = await db.query('SELECT * FROM sales');\n+  return rows.reduce((acc, row) => acc + row.amount, 0);\n+}\n",
+    "status": "?? src/api/salesReport.ts"
+  }
+}

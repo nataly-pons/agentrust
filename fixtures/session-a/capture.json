@@ -1,0 +1,51 @@
+{
+  "session_id": "fixture-session-a",
+  "cwd": "/tmp/fixture-a",
+  "started_at": "2026-11-08T10:00:00.000Z",
+  "updated_at": "2026-11-08T10:05:00.000Z",
+  "ended_at": "2026-11-08T10:05:00.000Z",
+  "branch": "feat/button",
+  "baseline": {
+    "available": true,
+    "cwd": "/tmp/fixture-a",
+    "head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "branch": "feat/button",
+    "status": "",
+    "treeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "prompts": [
+    {
+      "ts": "2026-11-08T10:00:10.000Z",
+      "prompt": "Actualiza solo el componente Button.tsx para aceptar una prop `loading`."
+    }
+  ],
+  "tools": [
+    {
+      "ts": "2026-11-08T10:01:00.000Z",
+      "tool_name": "Edit",
+      "input": { "file_path": "src/components/Button.tsx" },
+      "files": ["src/components/Button.tsx"],
+      "summary": "Added loading prop"
+    },
+    {
+      "ts": "2026-11-08T10:02:00.000Z",
+      "tool_name": "Edit",
+      "input": { "file_path": "src/components/Modal.tsx" },
+      "files": ["src/components/Modal.tsx"],
+      "summary": "Also tweaked Modal"
+    }
+  ],
+  "touched_files": [
+    "src/components/Button.tsx",
+    "src/components/Modal.tsx"
+  ],
+  "diff": {
+    "available": true,
+    "files": [
+      "src/components/Button.tsx",
+      "src/components/Modal.tsx"
+    ],
+    "unifiedDiff": "--- a/src/components/Button.tsx\n+++ b/src/components/Button.tsx\n@@ -1,3 +1,4 @@\n+export function Button({ loading }: { loading?: boolean }) {}\n--- a/src/components/Modal.tsx\n+++ b/src/components/Modal.tsx\n@@ -1,3 +1,4 @@\n+export function Modal({ open }: { open: boolean }) {}\n",
+    "status": " M src/components/Button.tsx\n M src/components/Modal.tsx"
+  }
+}

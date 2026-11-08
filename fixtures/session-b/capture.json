@@ -1,0 +1,44 @@
+{
+  "session_id": "fixture-session-b",
+  "cwd": "/tmp/fixture-b",
+  "started_at": "2026-11-08T11:00:00.000Z",
+  "updated_at": "2026-11-08T11:04:00.000Z",
+  "ended_at": "2026-11-08T11:04:00.000Z",
+  "branch": "chore/cleanup",
+  "baseline": {
+    "available": true,
+    "cwd": "/tmp/fixture-b",
+    "head": "cccccccccccccccccccccccccccccccccccccccc",
+    "branch": "chore/cleanup",
+    "status": "",
+    "treeHash": "dddddddddddddddddddddddddddddddddddddddd"
+  },
+  "prompts": [
+    {
+      "ts": "2026-11-08T11:00:10.000Z",
+      "prompt": "Ayúdame a revisar el script de seed de la base de datos de prueba."
+    }
+  ],
+  "tools": [
+    {
+      "ts": "2026-11-08T11:01:00.000Z",
+      "tool_name": "Read",
+      "input": { "file_path": "scripts/seed.sql" },
+      "files": ["scripts/seed.sql"]
+    },
+    {
+      "ts": "2026-11-08T11:02:00.000Z",
+      "tool_name": "Bash",
+      "input": { "command": "psql -d app_test -c 'DELETE FROM users;'" },
+      "files": [],
+      "summary": "DELETE 42"
+    }
+  ],
+  "touched_files": ["scripts/seed.sql"],
+  "diff": {
+    "available": true,
+    "files": [],
+    "unifiedDiff": "",
+    "status": ""
+  }
+}
