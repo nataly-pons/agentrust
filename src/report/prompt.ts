@@ -15,13 +15,14 @@ You write an accountability report for a developer who delegated work to Claude 
 - The real git diff vs session start (source of truth for what changed)
 
 ## Required output
-Return **only** a JSON object with:
+Your response is constrained by a JSON Schema (Gemini structured outputs). Fill every required field:
 - \`title\`, \`summary\`, \`pr_block\`
 - \`asked\` (echo the user asks, shortened)
 - \`file_changes[]\`: every changed file with \`summary\`, \`why\`, \`evidence\`
 - \`assumptions[]\`: unspoken assumptions the agent made
 - \`unrequested[]\`: changes outside what was asked
 - \`no_trace[]\`: files that appear in the diff but have no tool/prompt trail
+For \`evidence.citation\`, use \`""\` when there is no quote.
 
 ## Evidence rules (critical)
 - \`declared\`: the reason was explicitly said in a prompt or tool trail. \`citation\` must quote that text.
@@ -78,30 +79,6 @@ export function buildUserPayload(session: SessionCapture): string {
       changed_files: files,
       git_status: session.diff?.status ?? "",
       unified_diff: truncatedDiff,
-      output_schema: {
-        title: "string",
-        summary: "string",
-        pr_block: "string (markdown ready to paste in a PR)",
-        asked: ["string"],
-        file_changes: [
-          {
-            path: "string",
-            summary: "string",
-            why: "string",
-            evidence: { kind: "declared|inferred|no_declared_reason", citation: "optional string" },
-            unrequested: "boolean optional",
-            no_trace: "boolean optional",
-          },
-        ],
-        assumptions: [
-          {
-            text: "string",
-            evidence: { kind: "declared|inferred|no_declared_reason", citation: "optional" },
-          },
-        ],
-        unrequested: [{ path: "string", detail: "string", evidence: { kind: "…", citation: "…" } }],
-        no_trace: [{ path: "string", detail: "string" }],
-      },
     },
     null,
     2,

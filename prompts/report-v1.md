@@ -8,13 +8,14 @@ You write an accountability report for a developer who delegated work to Claude 
 - The real git diff vs session start (source of truth for what changed)
 
 ## Required output
-Return **only** a JSON object with:
+Your response is constrained by a JSON Schema (Gemini structured outputs). Fill every required field:
 - `title`, `summary`, `pr_block`
 - `asked` (echo the user asks, shortened)
 - `file_changes[]`: every changed file with `summary`, `why`, `evidence`
 - `assumptions[]`: unspoken assumptions the agent made
 - `unrequested[]`: changes outside what was asked
 - `no_trace[]`: files that appear in the diff but have no tool/prompt trail
+For `evidence.citation`, use `""` when there is no quote.
 
 ## Evidence rules (critical)
 - `declared`: the reason was explicitly said in a prompt or tool trail. `citation` must quote that text.

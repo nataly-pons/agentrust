@@ -1,10 +1,16 @@
 {
   "name": "agenttrust",
   "version": "0.1.0",
-  "description": "Explain every Claude Code session: what changed, why, assumptions, and unrequested work.",
-  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.8.3"
+  },
   "bin": {
     "agenttrust": "./dist/agenttrust.exe"
+  },
+  "description": "Explain every Claude Code session: what changed, why, assumptions, and unrequested work.",
+  "engines": {
+    "bun": ">=1.1.0"
   },
   "scripts": {
     "dev": "bun run src/cli.ts",
@@ -12,14 +18,8 @@
     "start": "bun run src/cli.ts",
     "typecheck": "tsc --noEmit"
   },
-  "engines": {
-    "bun": ">=1.1.0"
-  },
+  "type": "module",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.52.0"
-  },
-  "devDependencies": {
-    "@types/bun": "latest",
-    "typescript": "^5.8.3"
+    "@google/genai": "^3.0.0"
   }
 }

@@ -11,7 +11,7 @@ Nada se escribe en tu repositorio git. Todo vive en `~/.agenttrust/`.
 - [Bun](https://bun.sh) ≥ 1.1
 - [Claude Code](https://code.claude.com)
 - Git (recomendado)
-- `ANTHROPIC_API_KEY` en el entorno (para generar el informe)
+- `GEMINI_API_KEY` en el entorno (desde [Google AI Studio](https://aistudio.google.com/apikey); modelo por defecto: `gemini-2.5-flash` con structured outputs)
 
 ## Instalación (2 pasos)
 

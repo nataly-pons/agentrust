@@ -5,7 +5,7 @@ Usar las capturas en `fixtures/session-{a,b,c}/capture.json`.
 ```bash
 cp fixtures/session-a/capture.json ~/.agenttrust/sessions/fixture-session-a.json
 # repetir para b y c
-export ANTHROPIC_API_KEY=...   # para borrador completo (no fallback)
+export GEMINI_API_KEY=...   # para borrador completo (no fallback); modelo gemini-2.5-flash
 agenttrust why fixture-session-a
 agenttrust open fixture-session-a
 ```

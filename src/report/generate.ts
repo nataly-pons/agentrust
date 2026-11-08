@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenAI } from "@google/genai";
 import { writeFile } from "node:fs/promises";
 import type { SessionCapture } from "../capture/session";
 import { logEvent } from "../store/events";
@@ -7,11 +7,14 @@ import { buildUserPayload, loadSystemPrompt, PROMPT_VERSION } from "./prompt";
 import { renderHtml } from "./render";
 import {
   emptyReport,
+  REPORT_JSON_SCHEMA,
   type Assumption,
   type Evidence,
   type FileChange,
   type ReportDraft,
 } from "./schema";
+
+const DEFAULT_MODEL = "gemini-2.5-flash";
 
 function asEvidence(raw: unknown): Evidence {
   if (!raw || typeof raw !== "object") {
@@ -22,7 +25,7 @@ function asEvidence(raw: unknown): Evidence {
   if (kind === "declared" || kind === "inferred" || kind === "no_declared_reason") {
     return {
       kind,
-      citation: typeof obj.citation === "string" ? obj.citation : undefined,
+      citation: typeof obj.citation === "string" && obj.citation.trim() ? obj.citation : undefined,
     };
   }
   return { kind: "inferred" };
@@ -94,7 +97,6 @@ function normalizeDraft(raw: unknown, session: SessionCapture): ReportDraft {
       .filter((x) => x.path);
   }
 
-  // Ensure coverage: every diff file appears somewhere
   const known = new Set([
     ...base.file_changes.map((f) => f.path),
     ...base.no_trace.map((f) => f.path),
@@ -139,15 +141,6 @@ function normalizeDraft(raw: unknown, session: SessionCapture): ReportDraft {
   return base;
 }
 
-function extractJson(text: string): unknown {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const candidate = fenced ? fenced[1] : text;
-  const start = candidate.indexOf("{");
-  const end = candidate.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("No JSON object in model response");
-  return JSON.parse(candidate.slice(start, end + 1));
-}
-
 function fallbackDraft(session: SessionCapture, reason: string): ReportDraft {
   const draft = emptyReport(session.session_id);
   draft.branch = session.branch;
@@ -179,11 +172,11 @@ function fallbackDraft(session: SessionCapture, reason: string): ReportDraft {
 
 export async function generateReport(session: SessionCapture): Promise<ReportDraft> {
   await ensureStore();
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY;
   let draft: ReportDraft;
 
   if (!apiKey) {
-    draft = fallbackDraft(session, "ANTHROPIC_API_KEY ausente");
+    draft = fallbackDraft(session, "GEMINI_API_KEY ausente");
     await logEvent("draft_failed", {
       session_id: session.session_id,
       prompt_version: PROMPT_VERSION,
@@ -191,24 +184,30 @@ export async function generateReport(session: SessionCapture): Promise<ReportDra
     });
   } else {
     try {
-      const client = new Anthropic({ apiKey });
+      const ai = new GoogleGenAI({ apiKey });
       const system = await loadSystemPrompt();
       const user = buildUserPayload(session);
-      const response = await client.messages.create({
-        model: process.env.AGENTTRUST_MODEL ?? "claude-haiku-4-5-20251001",
-        max_tokens: 4096,
-        system,
-        messages: [{ role: "user", content: user }],
+      const model = process.env.AGENTTRUST_MODEL ?? DEFAULT_MODEL;
+
+      const response = await ai.models.generateContent({
+        model,
+        contents: `${system}\n\n---\n\nSession data (JSON):\n${user}`,
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: REPORT_JSON_SCHEMA,
+        },
       });
-      const text = response.content
-        .filter((b) => b.type === "text")
-        .map((b) => b.text)
-        .join("\n");
-      const parsed = extractJson(text);
+
+      const text = response.text;
+      if (!text?.trim()) {
+        throw new Error("Empty response from Gemini");
+      }
+      const parsed = JSON.parse(text) as unknown;
       draft = normalizeDraft(parsed, session);
       await logEvent("draft_generated", {
         session_id: session.session_id,
         prompt_version: PROMPT_VERSION,
+        detail: model,
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
